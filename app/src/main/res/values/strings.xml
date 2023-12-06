@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">RickAndMortyApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="could_not_be_loaded">Could not be loaded</string>
+    <string name="retry">RETRY</string>
+    <string name="no_connection">No connection...</string>
+    <string name="rick_and_morty">Rick &amp; Morty</string>
+    <string name="gender_male">Gender: %s</string>
+    <string name="status">Status: %s</string>
+    <string name="species">Species: %s</string>
+    <string name="type">Type: %s</string>
+    <string name="origin">Origin: %s</string>
+</resources>
