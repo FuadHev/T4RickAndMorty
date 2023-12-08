@@ -5,10 +5,25 @@
     <string name="could_not_be_loaded">Could not be loaded</string>
     <string name="retry">RETRY</string>
     <string name="no_connection">No connection...</string>
-    <string name="rick_and_morty">Rick &amp; Morty</string>
+    <string name="rick_and_morty">Rick &amp; Morty\nfandom</string>
     <string name="gender_male">Gender: %s</string>
     <string name="status">Status: %s</string>
     <string name="species">Species: %s</string>
     <string name="type">Type: %s</string>
     <string name="origin">Origin: %s</string>
+
+
+    <string-array name="genderArray">
+        <item>all</item>
+        <item>male</item>
+        <item>female</item>
+        <item>genderless</item>
+        <item>unknown</item>
+    </string-array>
+    <string-array name="statusArray">
+        <item>all</item>
+        <item>alive</item>
+        <item>dead</item>
+        <item>unknown</item>
+    </string-array>
 </resources>

@@ -27,7 +27,7 @@ class CharacterDetailFragment :
         val animation =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         sharedElementEnterTransition = animation
-        postponeEnterTransition(500, TimeUnit.MILLISECONDS)
+        postponeEnterTransition(200, TimeUnit.MILLISECONDS)
         with(binding){
             imgCharacter.load(characterData.image){
                 placeholder(R.drawable.preloading_animation)

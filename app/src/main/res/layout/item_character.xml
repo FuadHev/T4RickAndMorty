@@ -13,21 +13,20 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/dark_gray"
         app:cardCornerRadius="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center">
+            android:layout_height="match_parent">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_character"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:background="@drawable/example_img" />
@@ -73,9 +72,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
+        android:backgroundTint="#056415"
         android:ellipsize="end"
         android:maxLines="1"
-        android:backgroundTint="#056415"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="20sp"
@@ -84,10 +83,6 @@
         app:layout_constraintStart_toStartOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/txt_characterName"
         tools:text="Human" />
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

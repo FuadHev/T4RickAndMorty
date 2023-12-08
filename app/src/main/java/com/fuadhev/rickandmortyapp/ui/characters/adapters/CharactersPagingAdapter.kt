@@ -54,7 +54,7 @@ class CharactersPagingAdapter :
                         icGender.setBackgroundColor(Color.RED)
                         icGender.setImageResource(R.drawable.ic_genderless)
                     }
-                    "Unknown"->{
+                    "unknown"->{
                         icGender.setBackgroundColor(Color.GRAY)
                         icGender.setImageResource(R.drawable.ic_unknown)
                     }
