@@ -45,17 +45,17 @@ class CharactersViewModel @Inject constructor(private val repo: Repository) : Vi
     val filterState = _filterState.asStateFlow()
 
     init {
-        getCharactersByFilter()
+        getCharacters()
     }
 
 
-    fun getCharactersByFilter(
+    fun getCharacters(
         name: String = filterState.value.name,
         status: StatusType = filterState.value.status,
         gender: GenderType = filterState.value.gender
     ) {
 
-        repo.getCharactersByFilter(name, status.statusName, gender.genderName)
+        repo.getCharacters(name, status.statusName, gender.genderName)
             .cachedIn(viewModelScope).onEach {
             _characterState.value = it
 

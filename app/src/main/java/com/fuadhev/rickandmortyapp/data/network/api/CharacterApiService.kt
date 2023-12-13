@@ -16,13 +16,5 @@ interface CharacterApiService {
     ): Response<CharactersDTO>
 
 
-    @GET("character")
-    suspend fun getCharactersByName(
-        @Query("page") page: Int,
-        @Query("name") name: String = "",
-        @Query("status") status: String = "",
-        @Query("gender") gender: String = ""
-    ): Response<CharactersDTO>
-
 
 }

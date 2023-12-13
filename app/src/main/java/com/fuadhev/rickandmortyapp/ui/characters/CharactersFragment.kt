@@ -54,11 +54,18 @@ class CharactersFragment :
         }
         lifecycleScope.launch {
             viewModel.filterState.flowWithLifecycle(lifecycle).collectLatest {
-                viewModel.getCharactersByFilter(
+                viewModel.getCharacters(
                     name = it.name,
-                    gender= it.gender,
+                    gender = it.gender,
                     status = it.status
                 )
+                if(it.status!=StatusType.ALL){
+                    binding.statusTxtInput.setEndIconDrawable(R.drawable.ic_clear)
+                }
+                if(it.gender!=GenderType.ALL){
+                    binding.genderTxtInput.setEndIconDrawable(R.drawable.ic_clear)
+                }
+
             }
         }
 
@@ -70,8 +77,7 @@ class CharactersFragment :
 
             searchView.doAfterTextChanged {
                 if (it.toString().trim() == "") {
-                    viewModel.getCharactersByFilter("",StatusType.ALL,GenderType.ALL)
-//                    characterAdapter.submitData(viewLifecycleOwner.lifecycle, characterList)
+                    viewModel.getCharacters("", StatusType.ALL, GenderType.ALL)
                 }
             }
             searchView.setOnEditorActionListener { text, actionId, event ->
@@ -112,9 +118,11 @@ class CharactersFragment :
         binding.swipeRefresh.setOnRefreshListener {
             if (isOnline(requireContext())) {
                 lifecycleScope.launch {
-                    viewModel.getCharactersByFilter("",StatusType.ALL,GenderType.ALL)
+                    viewModel.getCharacters("", StatusType.ALL, GenderType.ALL)
 
                     viewModel.updateName(" ")
+                    binding.searchView.setText("")
+
 
                 }
             } else {
@@ -147,8 +155,12 @@ class CharactersFragment :
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         sharedElementEnterTransition = animation
         setAdapter()
+        setFilterMenu()
 
-        val defaultEndIconDrawable =binding.statusTxtInput.endIconDrawable
+    }
+
+    private fun setFilterMenu(){
+        val defaultEndIconDrawable = binding.statusTxtInput.endIconDrawable
         val genders = resources.getStringArray(R.array.genderArray)
         genderAdapter = ArrayAdapter(requireActivity(), R.layout.item_dropdown, genders)
 
@@ -177,7 +189,6 @@ class CharactersFragment :
             binding.statusTxtInput.endIconDrawable = defaultEndIconDrawable
         }
         binding.status.setAdapter(statusAdapter)
-
     }
 
     private fun setAdapter() {

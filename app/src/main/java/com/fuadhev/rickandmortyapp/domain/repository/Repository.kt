@@ -9,15 +9,7 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(val apiService: CharacterApiService) {
 
-    fun getCharacters()= Pager(
-        config = PagingConfig(
-            pageSize = 20,
-            maxSize = 200
-        ), pagingSourceFactory = { PagingDataSource(apiService) }
-    ).flow
-
-
-    fun getCharactersByFilter(name: String = "",
+    fun getCharacters(name: String = "",
                               status: String = "",
                               gender: String = "")= Pager(
         config = PagingConfig(
