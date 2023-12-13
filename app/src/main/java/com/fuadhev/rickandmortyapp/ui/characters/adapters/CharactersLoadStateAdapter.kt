@@ -24,6 +24,7 @@ class CharactersLoadStateAdapter(private val retry: ()-> Unit): LoadStateAdapter
                 progressBar.isVisible = loadState is LoadState.Loading
                 btnRetry.isVisible = loadState !is LoadState.Loading
                 txtError.isVisible = loadState !is LoadState.Loading
+
             }
         }
 

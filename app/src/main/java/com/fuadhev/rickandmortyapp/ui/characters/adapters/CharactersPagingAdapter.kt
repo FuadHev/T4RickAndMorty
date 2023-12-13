@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.fuadhev.rickandmortyapp.R
 import com.fuadhev.rickandmortyapp.common.utils.GenericDiffUtil
-import com.fuadhev.rickandmortyapp.data.network.dto.Result
 import com.fuadhev.rickandmortyapp.databinding.ItemCharacterBinding
 import com.fuadhev.rickandmortyapp.domain.model.CharactersUiModel
 import com.google.android.material.imageview.ShapeableImageView

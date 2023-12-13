@@ -22,6 +22,8 @@ import com.fuadhev.rickandmortyapp.R
 import com.fuadhev.rickandmortyapp.common.base.BaseFragment
 import com.fuadhev.rickandmortyapp.common.utils.Extensions.gone
 import com.fuadhev.rickandmortyapp.common.utils.Extensions.visible
+import com.fuadhev.rickandmortyapp.common.utils.GenderType
+import com.fuadhev.rickandmortyapp.common.utils.StatusType
 import com.fuadhev.rickandmortyapp.common.utils.isOnline
 import com.fuadhev.rickandmortyapp.databinding.FragmentCharactersBinding
 import com.fuadhev.rickandmortyapp.domain.model.CharactersUiModel
@@ -42,52 +44,24 @@ class CharactersFragment :
     private lateinit var statusAdapter: ArrayAdapter<String>
     private lateinit var genderAdapter: ArrayAdapter<String>
 
-    lateinit var characterList: PagingData<CharactersUiModel>
-
-    private var currentStatus = ""
-    private var gender = ""
-
-
     override fun observeEvents() {
 
         lifecycleScope.launch {
-            viewModel.charactersData.collectLatest {
+            viewModel.characterState.collectLatest {
                 characterAdapter.submitData(viewLifecycleOwner.lifecycle, it)
-                characterList = it
+
             }
         }
         lifecycleScope.launch {
-            viewModel.characterState.flowWithLifecycle(lifecycle).collectLatest {
-                when (it) {
-                    is CharactersUiState.Loading -> {
-
-                    }
-
-                    is CharactersUiState.SuccessSearchData -> {
-                        characterAdapter.submitData(viewLifecycleOwner.lifecycle, it.list)
-                    }
-
-                    is CharactersUiState.Error -> {
-
-                    }
-
-                }
-
+            viewModel.filterState.flowWithLifecycle(lifecycle).collectLatest {
+                viewModel.getCharactersByFilter(
+                    name = it.name,
+                    gender= it.gender,
+                    status = it.status
+                )
             }
         }
-//        if (isOnline(requireContext())) {
-//            lifecycleScope.launch {
-//                viewModel.getCharacters().collectLatest {
-//                    if (binding.searchView.text.isEmpty()) {
-//                        characterAdapter.submitData(viewLifecycleOwner.lifecycle, it)
-//                    }
-//                    characterList = it
-//                    binding.txtConnectionError.gone()
-//                }
-//            }
-//        } else {
-//            binding.txtConnectionError.visible()
-//        }
+
 
     }
 
@@ -96,13 +70,14 @@ class CharactersFragment :
 
             searchView.doAfterTextChanged {
                 if (it.toString().trim() == "") {
-                    characterAdapter.submitData(viewLifecycleOwner.lifecycle, characterList)
+                    viewModel.getCharactersByFilter("",StatusType.ALL,GenderType.ALL)
+//                    characterAdapter.submitData(viewLifecycleOwner.lifecycle, characterList)
                 }
             }
             searchView.setOnEditorActionListener { text, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                    viewModel.getCharactersByFilter(text.text.toString(), currentStatus, gender)
+                    viewModel.updateName(text.text.toString())
 
                     val inputMethodManager =
                         context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -134,6 +109,20 @@ class CharactersFragment :
             startPostponedEnterTransition()
         }
 
+        binding.swipeRefresh.setOnRefreshListener {
+            if (isOnline(requireContext())) {
+                lifecycleScope.launch {
+                    viewModel.getCharactersByFilter("",StatusType.ALL,GenderType.ALL)
+
+                    viewModel.updateName(" ")
+
+                }
+            } else {
+                binding.txtConnectionError.visible()
+            }
+            binding.swipeRefresh.isRefreshing = false
+        }
+
     }
 
     override fun onResume() {
@@ -152,57 +141,42 @@ class CharactersFragment :
     }
 
     override fun onCreateFinish() {
+
         searchNews()
         val animation =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         sharedElementEnterTransition = animation
         setAdapter()
+
+        val defaultEndIconDrawable =binding.statusTxtInput.endIconDrawable
         val genders = resources.getStringArray(R.array.genderArray)
         genderAdapter = ArrayAdapter(requireActivity(), R.layout.item_dropdown, genders)
 
         binding.genderType.setOnItemClickListener { _, _, pos, _ ->
-            gender = genders[pos]
-            if (gender == "all") {
-                gender = ""
-                viewModel.getCharactersByFilter(
-                    name = binding.searchView.text.toString(),
-                    currentStatus,
-                    gender
-                )
-            } else {
-                viewModel.getCharactersByFilter(
-                    binding.searchView.text.toString(),
-                    currentStatus,
-                    gender
-                )
-            }
-
+            val gender = genders[pos]
+            viewModel.updateGender(GenderType.from(gender))
+            binding.genderTxtInput.setEndIconDrawable(R.drawable.ic_clear)
+        }
+        binding.genderTxtInput.setEndIconOnClickListener {
+            viewModel.updateGender(GenderType.ALL)
+            binding.genderType.setText("")
+            binding.genderTxtInput.endIconDrawable = defaultEndIconDrawable
         }
         binding.genderType.setAdapter(genderAdapter)
-
 
         val statusList = resources.getStringArray(R.array.statusArray)
         statusAdapter = ArrayAdapter(requireActivity(), R.layout.item_dropdown, statusList)
         binding.status.setOnItemClickListener { _, _, pos, _ ->
-            currentStatus = statusList[pos]
-            if (currentStatus == "all") {
-                currentStatus = ""
-                viewModel.getCharactersByFilter(
-                    binding.searchView.text.toString(),
-                    currentStatus,
-                    gender
-                )
-            } else {
-                viewModel.getCharactersByFilter(
-                    binding.searchView.text.toString(),
-                    currentStatus,
-                    gender
-                )
-
-            }
+            val currentStatus = statusList[pos]
+            viewModel.updateStatus(StatusType.from(currentStatus))
+            binding.statusTxtInput.setEndIconDrawable(R.drawable.ic_clear)
+        }
+        binding.statusTxtInput.setEndIconOnClickListener {
+            viewModel.updateStatus(StatusType.ALL)
+            binding.status.setText("")
+            binding.statusTxtInput.endIconDrawable = defaultEndIconDrawable
         }
         binding.status.setAdapter(statusAdapter)
-
 
     }
 
@@ -217,8 +191,6 @@ class CharactersFragment :
         binding.rvCharacter.adapter = characterAdapter.withLoadStateFooter(
             footer = CharactersLoadStateAdapter { characterAdapter.retry() }
         )
-
-
     }
 
 
